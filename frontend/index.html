@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Authentication</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Toast Notification -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner" class="loading-spinner">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <!-- Simple Tab Header -->
+      <div class="tabs-header">
+        <span id="tabTitle" class="tab-title">Login</span>
+      </div>
+
+      <!-- Login Box -->
+      <div id="loginBox" class="auth-box active">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Login to your account</p>
+
+        <form onsubmit="login(event)">
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="loginEmail" placeholder="your@email.com" required>
+            <small id="loginEmailError" class="error"></small>
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="loginPassword" placeholder="••••••••" required>
+              <i class="fas fa-eye toggle-password" onclick="togglePassword('loginPassword', this)"></i>
+            </div>
+            <small id="loginPasswordError" class="error"></small>
+          </div>
+
+          <button id="loginBtn" type="submit" class="btn btn-primary btn-lg">
+            <span>Login</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <div class="divider">
+          <span>Or continue with</span>
+        </div>
+
+        <button class="btn btn-social btn-google" onclick="loginWithGoogle()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+              fill="#4285F4" />
+            <path
+              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+              fill="#34A853" />
+            <path
+              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+              fill="#FBBC05" />
+            <path
+              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+              fill="#EA4335" />
+          </svg>
+          Google
+        </button>
+
+        <button class="btn btn-social btn-phone" onclick="showPhoneLogin()">
+          <i class="fas fa-phone"></i>
+          Login with Phone
+        </button>
+
+        <p class="switch-text">
+          Don't have an account?
+          <span onclick="showSignup()" class="link">Sign up</span>
+        </p>
+      </div>
+
+      <!-- Signup Box -->
+      <div id="signupBox" class="auth-box">
+        <h2>Create Account</h2>
+        <p class="subtitle">Join us today</p>
+
+        <form onsubmit="handleSignup(event)">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="John Doe" required>
+            <small id="nameError" class="error"></small>
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="your@email.com" required>
+            <small id="emailError" class="error"></small>
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="password" placeholder="••••••••" required>
+              <i class="fas fa-eye toggle-password" onclick="togglePassword('password', this)"></i>
+            </div>
+            <small id="passwordError" class="error"></small>
+            <div class="password-strength">
+              <div id="strengthBar" class="strength-bar"></div>
+              <small id="strengthText"></small>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <div class="password-wrapper">
+              <input type="password" id="confirmPassword" placeholder="••••••••" required>
+              <i class="fas fa-eye toggle-password" onclick="togglePassword('confirmPassword', this)"></i>
+            </div>
+            <small id="confirmPasswordError" class="error"></small>
+          </div>
+
+          <button id="signupBtn" type="submit" class="btn btn-primary btn-lg">
+            <span>Send OTP</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </form>
+
+        <p class="switch-text">
+          Already have an account?
+          <span onclick="showLogin()" class="link">Log in</span>
+        </p>
+      </div>
+
+      <!-- OTP Verification Box -->
+      <div id="otpBox" class="auth-box">
+        <h2>Verify Email</h2>
+        <p class="subtitle" id="otpSubtitle">Enter OTP sent to your email</p>
+
+        <form onsubmit="verifyOtp(event)">
+          <div class="form-group">
+            <label>Enter OTP</label>
+            <input type="text" id="otp" placeholder="000000" maxlength="6" required>
+            <small id="otpError" class="error"></small>
+          </div>
+
+          <div class="otp-timer">
+            <span id="timerText">Resend OTP in <strong id="timer">60</strong>s</span>
+            <button type="button" id="resendBtn" class="link-btn" onclick="resendOtp()" disabled>Resend</button>
+          </div>
+
+          <button id="otpBtn" type="submit" class="btn btn-primary btn-lg">
+            <span>Verify & Create Account</span>
+            <i class="fas fa-check"></i>
+          </button>
+
+          <button type="button" class="btn btn-secondary" onclick="goBackToSignup()">
+            Back to Signup
+          </button>
+        </form>
+      </div>
+
+      <!-- Phone Login Box -->
+      <div id="phoneBox" class="auth-box">
+        <h2>Phone Login</h2>
+        <p class="subtitle">Enter your phone number</p>
+
+        <form onsubmit="handlePhoneLogin(event)">
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="phone" value="+91 " placeholder="+91 " required>
+            <small id="phoneError" class="error"></small>
+          </div>
+
+          <div id="recaptcha-container" class="recaptcha-wrapper"></div>
+
+          <button id="phoneOtpBtn" type="submit" class="btn btn-primary btn-lg">
+            <span>Send OTP</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+
+          <button type="button" class="btn btn-secondary" onclick="backToLogin()">
+            Back
+          </button>
+        </form>
+      </div>
+
+      <!-- Phone OTP Verification -->
+      <div id="phoneOtpBox" class="auth-box">
+        <h2>Verify Phone</h2>
+        <p class="subtitle" id="phoneOtpSubtitle">Enter OTP sent to your phone</p>
+
+        <form onsubmit="verifyPhoneOTP(event)">
+          <div class="form-group">
+            <label>Enter OTP</label>
+            <input type="text" id="phoneOtp" placeholder="000000" maxlength="6" required>
+            <small id="phoneOtpError" class="error"></small>
+          </div>
+
+          <button id="phoneVerifyBtn" type="submit" class="btn btn-primary btn-lg">
+            <span>Verify & Login</span>
+            <i class="fas fa-check"></i>
+          </button>
+
+          <button type="button" class="btn btn-secondary" onclick="backToPhoneLogin()">
+            Back
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Scripts -->
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script defer src="firebase.js"></script>
+  <script defer src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #36d1dc, #5b86e5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      text-align: center;
+      width: 300px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      width: 100%;
+      border: none;
+      background: #ff4757;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e84118;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="dashboard" class="card" style="display:none;">
+    <h2>Dashboard 🏠</h2>
+    <p id="userInfo">Loading...</p>
+
+    <button onclick="logout()">Logout</button>
+  </div>
+
+  <script>
+    window.addEventListener("load", async function () {
+
+      const token = localStorage.getItem("authToken");
+
+      console.log("Stored token:", token);
+
+      if (!token) {
+        window.location.href = "index.html";
+        return;
+      }
+
+      try {
+        // 🔥 Verify token with backend
+        const res = await fetch("http://localhost:5000/api/auth/me", {
+          headers: {
+            "Authorization": "Bearer " + token
+          }
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+          throw new Error("Invalid token");
+        }
+
+        // ✅ Show dashboard
+        document.getElementById("dashboard").style.display = "block";
+
+        // Optional: show user info
+        document.getElementById("userInfo").innerText =
+          "Logged in as: " + (data.user.email || data.user.phone);
+
+      } catch (err) {
+        console.error(err);
+
+        // ❌ Token invalid → logout
+        localStorage.removeItem("authToken");
+        window.location.href = "index.html";
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem("authToken");
+      window.location.href = "index.html";
+    }
+  </script>
+
+</body>
+</html>
