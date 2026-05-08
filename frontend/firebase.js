@@ -1,6 +1,6 @@
 const firebaseConfig = {
-  apiKey: 'AIzaSyBrV-uqfka7QPNTin4Y3LmKI_qsTKk4RLs',
-  authDomain: 'authentication-32c29.firebaseapp.com',
+  apiKey: 'YOUR_FIREBASE_API',
+  authDomain: 'YOUR_FIREBASE_DOMAIN',
 };
 
 firebase.initializeApp(firebaseConfig);
